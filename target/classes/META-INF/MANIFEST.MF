@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: lovage-web
+Implementation-Version: 0.1.0
+Built-By: paulm
+Implementation-Vendor-Id: com.lovage.sports
+Build-Jdk: 1.8.0_161
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/lovage-web
+Created-By: Maven Integration for Eclipse
+
