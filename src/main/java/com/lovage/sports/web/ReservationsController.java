@@ -28,7 +28,7 @@ public class ReservationsController {
 	// }
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
-	public List<Reservation> getReservations(
+	public List<Reservation> getReservationsBetween(
 			@RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
 			@RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
 

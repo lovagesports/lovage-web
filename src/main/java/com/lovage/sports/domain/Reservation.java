@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class Reservation {
 
 	private int id;
+	private Field field;
 	private LocalDateTime start;
 	private LocalDateTime end;
 	private Player initiator;
@@ -16,6 +17,14 @@ public class Reservation {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public Field getField() {
+		return field;
+	}
+
+	public void setField(Field field) {
+		this.field = field;
 	}
 
 	public LocalDateTime getStart() {
