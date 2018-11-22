@@ -22,6 +22,10 @@ public class ReservationsService {
 	private FieldsService fieldsService;
 
 	public List<Reservation> getReservationsBetweenDates(LocalDateTime start, LocalDateTime end) {
+		if (start == null || end == null) {
+			return Arrays.asList();
+		}
+
 		return getReservations().stream().filter(r -> r.getStart().isBefore(end) && r.getEnd().isAfter(start))
 				.collect(Collectors.toList());
 	}

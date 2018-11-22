@@ -44,8 +44,8 @@ public class FieldsController {
 
 	@RequestMapping(value = "/available", method = RequestMethod.GET)
 	public List<Field> getAvailableFields(
-			@RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
-			@RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
+			@RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime start,
+			@RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime end) {
 
 		List<Reservation> reservationsBetweenDates = reservationService.getReservationsBetweenDates(start, end);
 		List<Integer> fieldIdsForReservationsBetweenDates = reservationsBetweenDates.stream()
