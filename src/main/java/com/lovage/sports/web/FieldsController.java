@@ -1,6 +1,8 @@
 package com.lovage.sports.web;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,10 +46,14 @@ public class FieldsController {
 
 	@RequestMapping(value = "/available", method = RequestMethod.GET)
 	public List<Field> getAvailableFields(
-			@RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime start,
-			@RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime end) {
+			@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+			@RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime start,
+			@RequestParam("duration") int durationInMinutes) {
 
-		List<Reservation> reservationsBetweenDates = reservationService.getReservationsBetweenDates(start, end);
+		LocalDateTime startTime = LocalDateTime.of(date, start);
+		LocalDateTime endTime = LocalDateTime.of(date, start).plusMinutes(durationInMinutes);
+
+		List<Reservation> reservationsBetweenDates = reservationService.getReservationsBetweenDates(startTime, endTime);
 		List<Integer> fieldIdsForReservationsBetweenDates = reservationsBetweenDates.stream()
 				.map(r -> r.getField().getId()).collect(Collectors.toList());
 
