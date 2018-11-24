@@ -33,7 +33,6 @@ public class FieldsController {
 	public List<Field> getFields() {
 
 		return service.getFields();
-
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -41,7 +40,6 @@ public class FieldsController {
 
 		Field field = service.getFields().stream().filter(f -> f.getId() == id).findFirst().orElse(null);
 		return field;
-
 	}
 
 	@RequestMapping(value = "/available", method = RequestMethod.GET)

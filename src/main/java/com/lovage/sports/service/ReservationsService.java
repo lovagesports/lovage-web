@@ -21,6 +21,32 @@ public class ReservationsService {
 	@Autowired
 	private FieldsService fieldsService;
 
+	private List<Reservation> RESERVATIONS = null;
+
+	public List<Reservation> getReservations() {
+		if (RESERVATIONS == null) {
+			RESERVATIONS = fillReservations();
+		}
+		return RESERVATIONS;
+	}
+
+	public Reservation book(Field field) {
+
+		Reservation reservation = null;
+		if (field == null) {
+			return reservation;
+		}
+
+		Player initiator = playerService.getPlayers().get(0);
+		reservation = new Reservation();
+		reservation.setField(field);
+		reservation.setId(34);
+		reservation.setInitiator(initiator);
+		reservation.setParticipants(new Player[] { initiator });
+
+		return reservation;
+	}
+
 	public List<Reservation> getReservationsBetweenDates(LocalDateTime start, LocalDateTime end) {
 		if (start == null || end == null) {
 			return Arrays.asList();
@@ -30,8 +56,7 @@ public class ReservationsService {
 				.collect(Collectors.toList());
 	}
 
-	public List<Reservation> getReservations() {
-
+	private List<Reservation> fillReservations() {
 		List<Player> players = playerService.getPlayers();
 		List<Field> fields = fieldsService.getFields();
 
@@ -52,7 +77,7 @@ public class ReservationsService {
 		r2.setParticipants(new Player[] { players.get(2) });
 
 		Reservation r3 = new Reservation();
-		r3.setId(32);
+		r3.setId(33);
 		r3.setField(fields.get(3));
 		r3.setStart(LocalDateTime.of(2018, 11, 10, 19, 30));
 		r3.setEnd(LocalDateTime.of(2018, 11, 10, 21, 00));
@@ -61,4 +86,5 @@ public class ReservationsService {
 
 		return Arrays.asList(r1, r2, r3);
 	}
+
 }
