@@ -8,6 +8,8 @@ public class Reservation {
 	private Field field;
 	private LocalDateTime start;
 	private LocalDateTime end;
+	private String time;
+	private int duration;
 	private Player initiator;
 	private Player[] participants;
 
@@ -57,6 +59,22 @@ public class Reservation {
 
 	public void setParticipants(Player[] participants) {
 		this.participants = participants;
+	}
+
+	public String getTime() {
+		return time;
+	}
+
+	public void setTime(String time) {
+		this.time = time;
+	}
+
+	public int getDuration() {
+		return duration;
+	}
+
+	public void setDuration(int duration) {
+		this.duration = duration;
 	}
 
 }

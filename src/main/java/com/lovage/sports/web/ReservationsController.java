@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lovage.sports.domain.Field;
 import com.lovage.sports.domain.Reservation;
 import com.lovage.sports.service.ReservationsService;
 
@@ -31,8 +30,8 @@ public class ReservationsController {
 	}
 
 	@RequestMapping(value = "/book", method = RequestMethod.POST)
-	public Reservation book(@RequestBody Field field) {
+	public Reservation book(@RequestBody Reservation reservation) {
 
-		return service.book(field);
+		return service.book(reservation);
 	}
 }

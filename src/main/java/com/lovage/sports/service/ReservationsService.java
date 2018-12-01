@@ -30,19 +30,14 @@ public class ReservationsService {
 		return RESERVATIONS;
 	}
 
-	public Reservation book(Field field) {
-
-		Reservation reservation = null;
-		if (field == null) {
-			return reservation;
-		}
+	public Reservation book(Reservation reservation) {
 
 		Player initiator = playerService.getPlayers().get(0);
-		reservation = new Reservation();
-		reservation.setField(field);
 		reservation.setId(34);
 		reservation.setInitiator(initiator);
 		reservation.setParticipants(new Player[] { initiator });
+
+		RESERVATIONS.add(reservation);
 
 		return reservation;
 	}
