@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.lovage.sports.domain.Field;
 import com.lovage.sports.domain.Player;
 import com.lovage.sports.domain.Reservation;
+import com.lovage.sports.web.domain.CreateReservation;
 
 @Service
 public class ReservationsService {
@@ -40,6 +41,19 @@ public class ReservationsService {
 		RESERVATIONS.add(reservation);
 
 		return reservation;
+	}
+
+	public Reservation book2(CreateReservation reservation) {
+
+		Reservation newReservation = new Reservation();
+		Player initiator = playerService.getPlayers().get(0);
+		newReservation.setId(34);
+		newReservation.setInitiator(initiator);
+		newReservation.setParticipants(new Player[] { initiator });
+
+		RESERVATIONS.add(newReservation);
+
+		return newReservation;
 	}
 
 	public List<Reservation> getReservationsBetweenDates(LocalDateTime start, LocalDateTime end) {

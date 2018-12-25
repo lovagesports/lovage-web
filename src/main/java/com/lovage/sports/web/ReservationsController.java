@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lovage.sports.domain.Reservation;
 import com.lovage.sports.service.ReservationsService;
+import com.lovage.sports.web.domain.CreateReservation;
 
 @RestController
 @RequestMapping("/reservations")
@@ -33,5 +34,11 @@ public class ReservationsController {
 	public Reservation book(@RequestBody Reservation reservation) {
 
 		return service.book(reservation);
+	}
+	
+	@RequestMapping(value = "/book2", method = RequestMethod.POST)
+	public Reservation book(@RequestBody CreateReservation reservation) {
+
+		return service.book2(reservation);
 	}
 }
