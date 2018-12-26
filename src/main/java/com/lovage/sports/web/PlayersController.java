@@ -1,6 +1,11 @@
 package com.lovage.sports.web;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,14 +19,22 @@ import com.lovage.sports.service.PlayersService;
 public class PlayersController {
 
 	@Autowired
-	private PlayersService service;
+	private PlayersService playerService;
+
+	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Player> getFields() {
+
+		return playerService.getAllPlayers();
+	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public Player getPlayerById(@PathVariable("id") int id) {
+	public ResponseEntity<Player> getPlayerById(@PathVariable("id") String id) {
 
-		Player player = null;// = service.getPlayers().stream().filter(f -> f.getId() ==
-								// id).findFirst().orElse(null);
-		return player;
-
+		Player player = playerService.getPlayer(id);
+		if (player == null) {
+			return new ResponseEntity<Player>(player, HttpStatus.NOT_FOUND);
+		} else {
+			return new ResponseEntity<Player>(player, HttpStatus.FOUND);
+		}
 	}
 }

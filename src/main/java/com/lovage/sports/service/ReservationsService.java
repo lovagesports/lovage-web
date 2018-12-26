@@ -33,7 +33,7 @@ public class ReservationsService {
 
 	public Reservation book(Reservation reservation) {
 
-		Player initiator = playerService.getPlayers().get(0);
+		Player initiator = playerService.getAllPlayers().get(0);
 		reservation.setId("34");
 		reservation.setInitiator(initiator);
 		reservation.setParticipants(new Player[] { initiator });
@@ -46,7 +46,7 @@ public class ReservationsService {
 	public Reservation book2(CreateReservation reservation) {
 
 		Reservation newReservation = new Reservation();
-		Player initiator = playerService.getPlayers().get(0);
+		Player initiator = playerService.getAllPlayers().get(0);
 		newReservation.setId("34");
 		newReservation.setInitiator(initiator);
 		newReservation.setParticipants(new Player[] { initiator });
@@ -66,7 +66,7 @@ public class ReservationsService {
 	}
 
 	private List<Reservation> fillReservations() {
-		List<Player> players = playerService.getPlayers();
+		List<Player> players = playerService.getAllPlayers();
 		List<Field> fields = fieldsService.getAllFields();
 
 		Reservation r1 = new Reservation();
