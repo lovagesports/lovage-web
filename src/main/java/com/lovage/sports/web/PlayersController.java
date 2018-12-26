@@ -19,7 +19,8 @@ public class PlayersController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public Player getPlayerById(@PathVariable("id") int id) {
 
-		Player player = service.getPlayers().stream().filter(f -> f.getId() == id).findFirst().orElse(null);
+		Player player = null;// = service.getPlayers().stream().filter(f -> f.getId() ==
+								// id).findFirst().orElse(null);
 		return player;
 
 	}

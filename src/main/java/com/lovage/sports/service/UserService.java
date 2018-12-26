@@ -16,8 +16,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lovage.sports.domain.Player;
 import com.lovage.sports.domain.Role;
 import com.lovage.sports.domain.User;
+import com.lovage.sports.repo.PlayerRepository;
 import com.lovage.sports.repo.RoleRepository;
 import com.lovage.sports.repo.UserRepository;
 import com.lovage.sports.validation.EmailExistsException;
@@ -34,6 +36,9 @@ public class UserService implements UserDetailsService {
 	private RoleRepository roleRepository;
 
 	@Autowired
+	private PlayerRepository playerRepository;
+
+	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	@Transactional
@@ -42,16 +47,23 @@ public class UserService implements UserDetailsService {
 		if (emailExist(signupUser.getEmail())) {
 			throw new EmailExistsException("There is an account with that email address:" + signupUser.getEmail());
 		}
+
+		Player player = new Player();
+		player.setFirstName(signupUser.getFirstName());
+		player.setLastName(signupUser.getLastName());
+		Player savedPlayer = playerRepository.save(player);
+
 		User user = new User();
-		user.setFullName(signupUser.getFullName());
+		user.setEnabled(true);
+		user.setPlayer(savedPlayer);
 		user.setPassword(bCryptPasswordEncoder.encode(signupUser.getPassword()));
 		user.setEmail(signupUser.getEmail());
 
 		Role userRole = roleRepository.findByRole("ROLE_USER");
 		user.setRoles(Arrays.asList(userRole));
 
-		User saved = userRepository.save(user);
-		return saved;
+		User savedUser = userRepository.save(user);
+		return savedUser;
 	}
 
 	@Transactional

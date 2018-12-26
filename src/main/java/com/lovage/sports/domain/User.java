@@ -8,16 +8,22 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "user")
+@Document(collection = "users")
 public class User {
 
 	@Id
 	private String id;
+
 	@Indexed(unique = true, direction = IndexDirection.DESCENDING, dropDups = true)
 	private String email;
+
 	private String password;
-	private String fullName;
+
 	private boolean enabled;
+
+	@DBRef
+	private Player player;
+
 	@DBRef
 	private List<Role> roles;
 
@@ -45,14 +51,6 @@ public class User {
 		this.password = password;
 	}
 
-	public String getFullName() {
-		return fullName;
-	}
-
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	}
-
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -67,5 +65,13 @@ public class User {
 
 	public void setRoles(List<Role> roles) {
 		this.roles = roles;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
 	}
 }

@@ -1,27 +1,18 @@
-package com.lovage.sports.domain;
+package com.lovage.sports.web.domain;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-@Document(collection = "fields")
-public class Field {
-
-	@Id
-	private String id;
+public class CreateField {
 
 	private String name;
 	private String location;
 	private int length;
 	private int width;
-	private int recommendedPlayers;
+	private int recommendedNumberOfPlayers;
 	private int pricePerHour;
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
+	@Override
+	public String toString() {
+		return "CreateField [name=" + name + ", location=" + location + ", length=" + length + ", width=" + width
+				+ ", recommendedNumberOfPlayers=" + recommendedNumberOfPlayers + ", pricePerHour=" + pricePerHour + "]";
 	}
 
 	public String getName() {
@@ -56,12 +47,12 @@ public class Field {
 		this.width = width;
 	}
 
-	public int getRecommendedPlayers() {
-		return recommendedPlayers;
+	public int getRecommendedNumberOfPlayers() {
+		return recommendedNumberOfPlayers;
 	}
 
-	public void setRecommendedPlayers(int recommendedPlayers) {
-		this.recommendedPlayers = recommendedPlayers;
+	public void setRecommendedNumberOfPlayers(int recommendedNumberOfPlayers) {
+		this.recommendedNumberOfPlayers = recommendedNumberOfPlayers;
 	}
 
 	public int getPricePerHour() {

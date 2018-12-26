@@ -2,22 +2,35 @@ package com.lovage.sports.domain;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "reservations")
 public class Reservation {
 
-	private int id;
+	@Id
+	private String id;
+
+	@DBRef
 	private Field field;
+
 	private LocalDateTime start;
 	private LocalDateTime end;
 	private String time;
 	private int duration;
+
+	@DBRef
 	private Player initiator;
+
+	@DBRef
 	private Player[] participants;
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

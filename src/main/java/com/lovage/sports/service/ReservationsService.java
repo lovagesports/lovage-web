@@ -34,7 +34,7 @@ public class ReservationsService {
 	public Reservation book(Reservation reservation) {
 
 		Player initiator = playerService.getPlayers().get(0);
-		reservation.setId(34);
+		reservation.setId("34");
 		reservation.setInitiator(initiator);
 		reservation.setParticipants(new Player[] { initiator });
 
@@ -47,7 +47,7 @@ public class ReservationsService {
 
 		Reservation newReservation = new Reservation();
 		Player initiator = playerService.getPlayers().get(0);
-		newReservation.setId(34);
+		newReservation.setId("34");
 		newReservation.setInitiator(initiator);
 		newReservation.setParticipants(new Player[] { initiator });
 
@@ -67,10 +67,10 @@ public class ReservationsService {
 
 	private List<Reservation> fillReservations() {
 		List<Player> players = playerService.getPlayers();
-		List<Field> fields = fieldsService.getFields();
+		List<Field> fields = fieldsService.getAllFields();
 
 		Reservation r1 = new Reservation();
-		r1.setId(31);
+		r1.setId("31");
 		r1.setField(fields.get(0));
 		r1.setStart(LocalDateTime.of(2018, 11, 05, 20, 30));
 		r1.setEnd(LocalDateTime.of(2018, 11, 05, 22, 00));
@@ -78,7 +78,7 @@ public class ReservationsService {
 		r1.setParticipants(new Player[] { players.get(0), players.get(1) });
 
 		Reservation r2 = new Reservation();
-		r2.setId(32);
+		r2.setId("32");
 		r2.setField(fields.get(0));
 		r2.setStart(LocalDateTime.of(2018, 11, 05, 10, 30));
 		r2.setEnd(LocalDateTime.of(2018, 11, 05, 12, 00));
@@ -86,7 +86,7 @@ public class ReservationsService {
 		r2.setParticipants(new Player[] { players.get(2) });
 
 		Reservation r3 = new Reservation();
-		r3.setId(33);
+		r3.setId("33");
 		r3.setField(fields.get(3));
 		r3.setStart(LocalDateTime.of(2018, 11, 10, 19, 30));
 		r3.setEnd(LocalDateTime.of(2018, 11, 10, 21, 00));

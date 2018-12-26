@@ -11,7 +11,11 @@ public class SignupUser {
 
 	@NotNull
 	@NotEmpty
-	private String fullName;
+	private String firstName;
+
+	@NotNull
+	@NotEmpty
+	private String lastName;
 
 	@NotNull
 	@NotEmpty
@@ -25,16 +29,24 @@ public class SignupUser {
 
 	@Override
 	public String toString() {
-		return "SignupUser [fullName=" + fullName + ", password=" + password + ", matchingPassword=" + matchingPassword
-				+ ", email=" + email + "]";
+		return "SignupUser [firstName=" + firstName + ", lastName=" + lastName + ", password=" + password
+				+ ", matchingPassword=" + matchingPassword + ", email=" + email + "]";
 	}
 
-	public String getFullName() {
-		return fullName;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	public String getPassword() {
