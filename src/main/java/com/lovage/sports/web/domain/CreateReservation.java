@@ -4,23 +4,20 @@ import java.time.LocalDateTime;
 
 public class CreateReservation {
 
-	private int fieldId;
+	private String fieldId;
 	private LocalDateTime start;
-	private String startTime;
 	private int duration;
-	private int initiatorId;
 
 	@Override
 	public String toString() {
-		return "CreateReservation [fieldId=" + fieldId + ", start=" + start + ", startTime=" + startTime + ", duration="
-				+ duration + ", initiatorId=" + initiatorId + "]";
+		return "CreateReservation [fieldId=" + fieldId + ", start=" + start + ", duration=" + duration + "]";
 	}
 
-	public int getFieldId() {
+	public String getFieldId() {
 		return fieldId;
 	}
 
-	public void setFieldId(int fieldId) {
+	public void setFieldId(String fieldId) {
 		this.fieldId = fieldId;
 	}
 
@@ -32,27 +29,11 @@ public class CreateReservation {
 		this.start = start;
 	}
 
-	public String getStartTime() {
-		return startTime;
-	}
-
-	public void setStartTime(String startTime) {
-		this.startTime = startTime;
-	}
-
 	public int getDuration() {
 		return duration;
 	}
 
 	public void setDuration(int duration) {
 		this.duration = duration;
-	}
-
-	public int getInitiatorId() {
-		return initiatorId;
-	}
-
-	public void setInitiatorId(int initiatorId) {
-		this.initiatorId = initiatorId;
 	}
 }

@@ -17,7 +17,7 @@ public class FieldsService {
 	private FieldRepository fieldRepository;
 
 	@Transactional
-	public Field createField(CreateField createField) {
+	public Field create(CreateField createField) {
 
 		Field field = new Field();
 		field.setName(createField.getName());

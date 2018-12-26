@@ -1,5 +1,6 @@
 package com.lovage.sports.web;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,14 +32,8 @@ public class ReservationsController {
 	}
 
 	@RequestMapping(value = "/book", method = RequestMethod.POST)
-	public Reservation book(@RequestBody Reservation reservation) {
+	public Reservation book(@RequestBody CreateReservation reservation, Principal principal) {
 
-		return service.book(reservation);
-	}
-	
-	@RequestMapping(value = "/book2", method = RequestMethod.POST)
-	public Reservation book(@RequestBody CreateReservation reservation) {
-
-		return service.book2(reservation);
+		return service.create(reservation, principal);
 	}
 }

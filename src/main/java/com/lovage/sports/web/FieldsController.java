@@ -57,7 +57,7 @@ public class FieldsController {
 	}
 
 	private Field createField(CreateField field) {
-		Field created = fieldService.createField(field);
+		Field created = fieldService.create(field);
 		return created;
 	}
 }

@@ -1,6 +1,8 @@
 package com.lovage.sports.domain;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -17,7 +19,8 @@ public class Reservation {
 
 	private LocalDateTime start;
 	private LocalDateTime end;
-	private String time;
+	private LocalDate date;
+
 	private int duration;
 
 	@DBRef
@@ -25,6 +28,13 @@ public class Reservation {
 
 	@DBRef
 	private Player[] participants;
+
+	@Override
+	public String toString() {
+		return "Reservation [id=" + id + ", field=" + field + ", start=" + start + ", end=" + end + ", date=" + date
+				+ ", duration=" + duration + ", initiator=" + initiator + ", participants="
+				+ Arrays.toString(participants) + "]";
+	}
 
 	public String getId() {
 		return id;
@@ -58,6 +68,22 @@ public class Reservation {
 		this.end = end;
 	}
 
+	public LocalDate getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
+
+	public int getDuration() {
+		return duration;
+	}
+
+	public void setDuration(int duration) {
+		this.duration = duration;
+	}
+
 	public Player getInitiator() {
 		return initiator;
 	}
@@ -73,21 +99,4 @@ public class Reservation {
 	public void setParticipants(Player[] participants) {
 		this.participants = participants;
 	}
-
-	public String getTime() {
-		return time;
-	}
-
-	public void setTime(String time) {
-		this.time = time;
-	}
-
-	public int getDuration() {
-		return duration;
-	}
-
-	public void setDuration(int duration) {
-		this.duration = duration;
-	}
-
 }
