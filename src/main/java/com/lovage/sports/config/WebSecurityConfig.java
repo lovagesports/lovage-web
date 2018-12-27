@@ -60,7 +60,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
 				.and().authorizeRequests().antMatchers("/auth/**").permitAll().antMatchers("/api/**")
-				.hasRole("USER").anyRequest().authenticated().and().formLogin().permitAll().and().logout().permitAll();
+				.hasRole("USER").anyRequest().authenticated();
 	}
 
 	@Override
