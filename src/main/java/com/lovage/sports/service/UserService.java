@@ -69,7 +69,7 @@ public class UserService implements UserDetailsService {
 	@Transactional
 	public boolean checkUserLogin(LoginUser loginUser) {
 		User user = userRepository.findByEmail(loginUser.getEmail());
-		if (user != null) {
+		if (user != null && user.isEnabled()) {
 			return bCryptPasswordEncoder.matches(loginUser.getPassword(), user.getPassword());
 		}
 		return false;

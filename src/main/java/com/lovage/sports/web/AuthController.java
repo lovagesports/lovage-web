@@ -79,6 +79,16 @@ public class AuthController {
 		return new ResponseEntity<LoginUser>(loginUser, HttpStatus.NOT_FOUND);
 	}
 
+	@RequestMapping(value = "/logout", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Boolean> logout() {
+		System.out.println("Logging out ...");
+
+		securityService.logout();
+
+		return new ResponseEntity<Boolean>(true, HttpStatus.ACCEPTED);
+	}
+
 	private User registerUser(SignupUser signupUser, BindingResult result) {
 		User registered = null;
 		try {
