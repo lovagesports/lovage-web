@@ -31,7 +31,7 @@ public class AuthController {
 	@Autowired
 	private SecurityService securityService;
 
-	@CrossOrigin(origins = "http://localhost:9000")
+	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/signup", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<SignupUser> registerUserAccount(@RequestBody @Valid SignupUser signupUser,
@@ -55,7 +55,7 @@ public class AuthController {
 		}
 	}
 
-	@CrossOrigin(origins = "http://localhost:9000")
+	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<LoginUser> login(@RequestBody @Valid LoginUser loginUser, BindingResult result) {
@@ -79,6 +79,7 @@ public class AuthController {
 		return new ResponseEntity<LoginUser>(loginUser, HttpStatus.NOT_FOUND);
 	}
 
+	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/logout", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<Boolean> logout() {
