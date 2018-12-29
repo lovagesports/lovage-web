@@ -1,7 +1,7 @@
 package com.lovage.sports.security;
 
 import java.io.IOException;
-import java.sql.Date;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 import javax.servlet.FilterChain;
@@ -18,6 +18,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lovage.sports.web.domain.LoginUser;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -70,15 +71,18 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication auth) throws IOException, ServletException {
 
-		Long now = System.currentTimeMillis();
-		String token = Jwts.builder().setSubject(auth.getName())
-				// Convert to list of strings.
-				// This is important because it affects the way we get them back in the Gateway.
-				.claim("authorities",
-						auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-				.setIssuedAt(new Date(now)).setExpiration(new Date(now + jwtConfig.getExpiration() * 1000)) // in
-																											// milliseconds
-				.signWith(SignatureAlgorithm.HS512, jwtConfig.getSecret().getBytes()).compact();
+		Claims claims = Jwts.claims().setSubject(auth.getName());
+		claims.put("roles",
+				auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+
+		Date now = new Date();
+		Date validity = new Date(now.getTime() + jwtConfig.getExpiration() * 1000);
+		String token = Jwts.builder()//
+				.setClaims(claims)//
+				.setIssuedAt(now)//
+				.setExpiration(validity)//
+				.signWith(SignatureAlgorithm.HS256, jwtConfig.getSecret())//
+				.compact();
 
 		// Add token to header
 		response.addHeader(jwtConfig.getHeader(), jwtConfig.getPrefix() + token);

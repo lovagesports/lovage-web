@@ -1,5 +1,7 @@
 package com.lovage.sports.security;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,9 +61,9 @@ public class SecurityServiceImpl implements SecurityService {
 	@Override
 	public boolean checkUserLogin(LoginUser loginUser) {
 
-		User user = userDetailsService.findUserByEmail(loginUser.getEmail());
-		if (user != null && user.isEnabled()) {
-			return bCryptPasswordEncoder.matches(loginUser.getPassword(), user.getPassword());
+		Optional<User> user = userDetailsService.findUserByEmail(loginUser.getEmail());
+		if (user.isPresent() && user.get().isEnabled()) {
+			return bCryptPasswordEncoder.matches(loginUser.getPassword(), user.get().getPassword());
 		}
 		return false;
 	}

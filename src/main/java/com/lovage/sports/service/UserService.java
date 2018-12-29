@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,6 @@ import com.lovage.sports.repo.PlayerRepository;
 import com.lovage.sports.repo.RoleRepository;
 import com.lovage.sports.repo.UserRepository;
 import com.lovage.sports.validation.EmailExistsException;
-import com.lovage.sports.web.domain.LoginUser;
 import com.lovage.sports.web.domain.SignupUser;
 
 @Service
@@ -66,25 +66,25 @@ public class UserService implements UserDetailsService {
 		return savedUser;
 	}
 
-	public User findUserByEmail(String email) {
+	public Optional<User> findUserByEmail(String email) {
 		return userRepository.findByEmail(email);
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-		User user = userRepository.findByEmail(email);
-		if (user != null && user.isEnabled()) {
-			List<GrantedAuthority> authorities = getUserAuthority(user.getRoles());
-			return buildUserForAuthentication(user, authorities);
+		Optional<User> user = userRepository.findByEmail(email);
+		if (user.isPresent() && user.get().isEnabled()) {
+			List<GrantedAuthority> authorities = getUserAuthority(user.get().getRoles());
+			return buildUserForAuthentication(user.get(), authorities);
 		} else {
 			throw new UsernameNotFoundException("username not found");
 		}
 	}
 
 	private boolean emailExist(String email) {
-		User user = userRepository.findByEmail(email);
-		if (user != null) {
+		Optional<User> user = userRepository.findByEmail(email);
+		if (user.isPresent()) {
 			return true;
 		}
 		return false;

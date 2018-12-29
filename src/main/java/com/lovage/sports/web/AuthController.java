@@ -1,11 +1,19 @@
 package com.lovage.sports.web;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,9 +23,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lovage.sports.domain.User;
+import com.lovage.sports.security.JwtTokenProvider;
 import com.lovage.sports.security.SecurityService;
 import com.lovage.sports.service.UserService;
 import com.lovage.sports.validation.EmailExistsException;
+import com.lovage.sports.web.domain.LoginUser;
 import com.lovage.sports.web.domain.SignupUser;
 
 @RestController
@@ -29,6 +39,12 @@ public class AuthController {
 
 	@Autowired
 	private SecurityService securityService;
+
+	@Autowired
+	private JwtTokenProvider jwtTokenProvider;
+
+	@Autowired
+	AuthenticationManager authenticationManager;
 
 	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/signup", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -54,32 +70,21 @@ public class AuthController {
 		}
 	}
 
-	// @CrossOrigin(origins = "http://localhost:4200")
-	// @RequestMapping(value = "/login", method = RequestMethod.POST, consumes =
-	// MediaType.APPLICATION_JSON_VALUE, produces =
-	// MediaType.APPLICATION_JSON_VALUE)
-	// @ResponseBody
-	// public ResponseEntity<LoginUser> login(@RequestBody @Valid LoginUser
-	// loginUser, BindingResult result) {
-	// System.out.println("Checking Login Credentials...");
-	//
-	// boolean login = false;
-	// if (!result.hasErrors()) {
-	// login = loginUser(loginUser);
-	// }
-	//
-	// if (!login) {
-	// result.rejectValue("email", "message.regError");
-	// }
-	//
-	// if (login) {
-	// System.out.println("Found...");
-	// return new ResponseEntity<LoginUser>(loginUser, HttpStatus.ACCEPTED);
-	// }
-	//
-	// System.out.println("Not Found...");
-	// return new ResponseEntity<LoginUser>(loginUser, HttpStatus.NOT_FOUND);
-	// }
+	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<Object, Object>> login(@RequestBody @Valid LoginUser user) {
+		try {
+			String username = user.getEmail();
+			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, user.getPassword()));
+			String token = jwtTokenProvider.createToken(username, userService.findUserByEmail(username)
+					.orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found")).getRoles());
+			Map<Object, Object> model = new HashMap<>();
+			model.put("username", username);
+			model.put("token", token);
+			return new ResponseEntity<Map<Object, Object>>(model, HttpStatus.ACCEPTED);
+		} catch (AuthenticationException e) {
+			throw new BadCredentialsException("Invalid username/password supplied");
+		}
+	}
 
 	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/logout", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
