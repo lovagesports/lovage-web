@@ -13,11 +13,17 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.lovage.sports.security.JwtConfig;
+import com.lovage.sports.security.JwtTokenAuthenticationFilter;
+import com.lovage.sports.security.JwtUsernameAndPasswordAuthenticationFilter;
+import com.lovage.sports.security.SecurityService;
 import com.lovage.sports.service.UserService;
 
 @Configuration
@@ -25,10 +31,16 @@ import com.lovage.sports.service.UserService;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	UserService userDetailsService;
+	private UserService userDetailsService;
 
 	@Autowired
-	RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+	private SecurityService securityService;
+
+	@Autowired
+	private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+
+	@Autowired
+	private JwtConfig jwtConfig;
 
 	@Autowired
 	public void configAuthBuilder(AuthenticationManagerBuilder builder) throws Exception {
@@ -59,16 +71,38 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		return super.authenticationManagerBean();
 	}
 
+	@Bean
+	public JwtConfig jwtConfig() {
+		return new JwtConfig();
+	}
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
-		http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
+		// @formatter:off
+
+		http.cors().and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+				.and().httpBasic().disable().exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
 				.and().authorizeRequests().antMatchers("/auth/**").permitAll().antMatchers("/api/**").hasRole("USER")
-				.anyRequest().authenticated();
+				.anyRequest().authenticated()
+				// Add a filter to validate user credentials and add token in the response
+				// header
+				// What's the authenticationManager()?
+				// An object provided by WebSecurityConfigurerAdapter, used to authenticate the
+				// user passing user's credentials
+				// The filter needs this auth manager to authenticate the user.
+				.and().addFilter(new JwtUsernameAndPasswordAuthenticationFilter(jwtConfig, securityService))
+				// Add a filter to validate the tokens with every request
+				.addFilterAfter(new JwtTokenAuthenticationFilter(jwtConfig),
+						UsernamePasswordAuthenticationFilter.class);
+
 		// .and().addFilter(new JWTAuthenticationFilter(authenticationManager()))
 		// .addFilter(new
 		// JWTAuthorizationFilter(authenticationManager())).sessionManagement()
 		// .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+		// @formatter:on
+
 	}
 
 	@Override

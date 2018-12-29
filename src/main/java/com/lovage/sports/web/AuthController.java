@@ -18,7 +18,6 @@ import com.lovage.sports.domain.User;
 import com.lovage.sports.security.SecurityService;
 import com.lovage.sports.service.UserService;
 import com.lovage.sports.validation.EmailExistsException;
-import com.lovage.sports.web.domain.LoginUser;
 import com.lovage.sports.web.domain.SignupUser;
 
 @RestController
@@ -55,29 +54,32 @@ public class AuthController {
 		}
 	}
 
-	@CrossOrigin(origins = "http://localhost:4200")
-	@RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public ResponseEntity<LoginUser> login(@RequestBody @Valid LoginUser loginUser, BindingResult result) {
-		System.out.println("Checking Login Credentials...");
-
-		boolean login = false;
-		if (!result.hasErrors()) {
-			login = loginUser(loginUser);
-		}
-
-		if (!login) {
-			result.rejectValue("email", "message.regError");
-		}
-
-		if (login) {
-			System.out.println("Found...");
-			return new ResponseEntity<LoginUser>(loginUser, HttpStatus.ACCEPTED);
-		}
-
-		System.out.println("Not Found...");
-		return new ResponseEntity<LoginUser>(loginUser, HttpStatus.NOT_FOUND);
-	}
+	// @CrossOrigin(origins = "http://localhost:4200")
+	// @RequestMapping(value = "/login", method = RequestMethod.POST, consumes =
+	// MediaType.APPLICATION_JSON_VALUE, produces =
+	// MediaType.APPLICATION_JSON_VALUE)
+	// @ResponseBody
+	// public ResponseEntity<LoginUser> login(@RequestBody @Valid LoginUser
+	// loginUser, BindingResult result) {
+	// System.out.println("Checking Login Credentials...");
+	//
+	// boolean login = false;
+	// if (!result.hasErrors()) {
+	// login = loginUser(loginUser);
+	// }
+	//
+	// if (!login) {
+	// result.rejectValue("email", "message.regError");
+	// }
+	//
+	// if (login) {
+	// System.out.println("Found...");
+	// return new ResponseEntity<LoginUser>(loginUser, HttpStatus.ACCEPTED);
+	// }
+	//
+	// System.out.println("Not Found...");
+	// return new ResponseEntity<LoginUser>(loginUser, HttpStatus.NOT_FOUND);
+	// }
 
 	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/logout", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -100,12 +102,12 @@ public class AuthController {
 		return registered;
 	}
 
-	private boolean loginUser(LoginUser loginUser) {
-		boolean isValid = userService.checkUserLogin(loginUser);
-
-		if (isValid) {
-			securityService.autologin(loginUser.getEmail(), loginUser.getPassword());
-		}
-		return isValid;
-	}
+	// private boolean loginUser(LoginUser loginUser) {
+	// boolean isValid = userService.checkUserLogin(loginUser);
+	//
+	// if (isValid) {
+	// securityService.autologin(loginUser.getEmail(), loginUser.getPassword());
+	// }
+	// return isValid;
+	// }
 }

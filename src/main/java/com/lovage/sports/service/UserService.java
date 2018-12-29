@@ -66,15 +66,6 @@ public class UserService implements UserDetailsService {
 		return savedUser;
 	}
 
-	@Transactional
-	public boolean checkUserLogin(LoginUser loginUser) {
-		User user = userRepository.findByEmail(loginUser.getEmail());
-		if (user != null && user.isEnabled()) {
-			return bCryptPasswordEncoder.matches(loginUser.getPassword(), user.getPassword());
-		}
-		return false;
-	}
-
 	public User findUserByEmail(String email) {
 		return userRepository.findByEmail(email);
 	}
@@ -83,7 +74,7 @@ public class UserService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
 		User user = userRepository.findByEmail(email);
-		if (user != null) {
+		if (user != null && user.isEnabled()) {
 			List<GrantedAuthority> authorities = getUserAuthority(user.getRoles());
 			return buildUserForAuthentication(user, authorities);
 		} else {
