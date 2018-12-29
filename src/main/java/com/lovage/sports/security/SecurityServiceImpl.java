@@ -60,9 +60,12 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 
 	@Override
-	public void logout() {
+	public void logout(String jwtToken) {
 		SecurityContextHolder.getContext().setAuthentication(null);
 		SecurityContextHolder.clearContext();
+
+		tokenStore.getTokens().remove(jwtToken);
+
 	}
 
 	private void authenticate(String username, String password) {

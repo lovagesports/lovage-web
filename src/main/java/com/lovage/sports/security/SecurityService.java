@@ -8,6 +8,6 @@ public interface SecurityService {
 
 	public boolean checkUserLogin(LoginUser loginUser);
 
-	public void logout();
+	public void logout(String jwtToken);
 
 }

@@ -15,12 +15,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.lovage.sports.security.JwtConfig;
-import com.lovage.sports.security.JwtConfigurer;
+import com.lovage.sports.security.JwtTokenDecodeFilter;
 import com.lovage.sports.security.JwtTokenProvider;
 import com.lovage.sports.service.UserService;
 
@@ -79,8 +80,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.cors().and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and().httpBasic().disable().exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
 				.and().authorizeRequests().antMatchers("/x/login").permitAll().antMatchers("/auth/**").hasRole("USER")
-				.anyRequest().authenticated().and().apply(new JwtConfigurer(jwtTokenProvider));
+				.anyRequest().authenticated();
 
+		JwtTokenDecodeFilter customFilter = new JwtTokenDecodeFilter(jwtTokenProvider);
+		http.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
 		// @formatter:on
 	}
 
