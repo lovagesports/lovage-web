@@ -8,16 +8,11 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
 public class JwtTokenDecodeFilter extends GenericFilterBean {
 
 	private JwtTokenProvider jwtTokenProvider;
-
-	// @Autowired
-	// private JwtConfig jwtConfig;
 
 	public JwtTokenDecodeFilter(JwtTokenProvider jwtTokenProvider) {
 		this.jwtTokenProvider = jwtTokenProvider;
@@ -29,12 +24,11 @@ public class JwtTokenDecodeFilter extends GenericFilterBean {
 
 		String token = jwtTokenProvider.resolveToken((HttpServletRequest) req);
 		if (token != null && jwtTokenProvider.validateToken(token)) {
-			Authentication auth = token != null ? jwtTokenProvider.getAuthentication(token) : null;
-			SecurityContextHolder.getContext().setAuthentication(auth);
+			// Authentication auth = token != null ?
+			// jwtTokenProvider.getAuthentication(token) : null;
+			// SecurityContextHolder.getContext().setAuthentication(auth);
 		}
 
-		// Add token to header
-		// res.addHeader(jwtConfig.getHeader(), jwtConfig.getPrefix() + token);
 		filterChain.doFilter(req, res);
 	}
 }

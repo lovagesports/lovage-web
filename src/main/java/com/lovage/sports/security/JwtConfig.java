@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 public class JwtConfig {
 
 	@Value("${security.jwt.uri:/auth/login}")
-	private String Uri;
+	private String loginUri;
 
 	@Value("${security.jwt.header:Authorization}")
 	private String header;
@@ -20,11 +20,11 @@ public class JwtConfig {
 	private String secret;
 
 	public String getUri() {
-		return Uri;
+		return loginUri;
 	}
 
-	public void setUri(String uri) {
-		Uri = uri;
+	public void setUri(String loginUri) {
+		this.loginUri = loginUri;
 	}
 
 	public String getHeader() {

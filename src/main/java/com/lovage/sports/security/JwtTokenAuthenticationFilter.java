@@ -18,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
+@Deprecated
 public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtConfig jwtConfig;
@@ -55,7 +56,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 				// expired
 
 			// 4. Validate the token
-			Claims claims = Jwts.parser().setSigningKey(jwtConfig.getSecret().getBytes()).parseClaimsJws(token)
+			Claims claims = Jwts.parser().setSigningKey(jwtConfig.getSecret()).parseClaimsJws(token)
 					.getBody();
 
 			String authenticatedUsername = null;

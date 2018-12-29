@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
@@ -43,9 +41,6 @@ public class AuthController {
 	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
 
-	@Autowired
-	AuthenticationManager authenticationManager;
-
 	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/signup", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
@@ -73,13 +68,21 @@ public class AuthController {
 	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<Object, Object>> login(@RequestBody @Valid LoginUser user) {
 		try {
-			String username = user.getEmail();
-			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, user.getPassword()));
-			String token = jwtTokenProvider.createToken(username, userService.findUserByEmail(username)
-					.orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found")).getRoles());
+
 			Map<Object, Object> model = new HashMap<>();
-			model.put("username", username);
-			model.put("token", token);
+			boolean isValid = securityService.checkUserLogin(user);
+
+			if (isValid) {
+				securityService.autologin(user.getEmail(), user.getPassword());
+
+				String username = user.getEmail();
+				String token = jwtTokenProvider.createToken(username,
+						userService.findUserByEmail(username)
+								.orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found"))
+								.getRoles());
+				model.put("username", username);
+				model.put("token", token);
+			}
 			return new ResponseEntity<Map<Object, Object>>(model, HttpStatus.ACCEPTED);
 		} catch (AuthenticationException e) {
 			throw new BadCredentialsException("Invalid username/password supplied");
@@ -106,13 +109,4 @@ public class AuthController {
 		}
 		return registered;
 	}
-
-	// private boolean loginUser(LoginUser loginUser) {
-	// boolean isValid = userService.checkUserLogin(loginUser);
-	//
-	// if (isValid) {
-	// securityService.autologin(loginUser.getEmail(), loginUser.getPassword());
-	// }
-	// return isValid;
-	// }
 }
