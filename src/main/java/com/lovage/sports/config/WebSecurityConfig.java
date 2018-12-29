@@ -22,8 +22,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.lovage.sports.security.JwtConfig;
 import com.lovage.sports.security.JwtConfigurer;
 import com.lovage.sports.security.JwtTokenProvider;
-import com.lovage.sports.security.JwtUsernameAndPasswordAuthenticationFilter;
-import com.lovage.sports.security.SecurityService;
 import com.lovage.sports.service.UserService;
 
 @Configuration
@@ -34,16 +32,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private UserService userDetailsService;
 
 	@Autowired
-	private SecurityService securityService;
-
-	@Autowired
 	private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
 	@Autowired
-	private JwtConfig jwtConfig;
-
-	@Autowired
-	JwtTokenProvider jwtTokenProvider;
+	private JwtTokenProvider jwtTokenProvider;
 
 	@Autowired
 	public void configAuthBuilder(AuthenticationManagerBuilder builder) throws Exception {
@@ -86,27 +78,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.cors().and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and().httpBasic().disable().exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
-				.and().authorizeRequests().antMatchers("/api/auth/**").permitAll().antMatchers("/api/**")
-				.hasRole("USER").anyRequest().authenticated().and()
-				.addFilter(new JwtUsernameAndPasswordAuthenticationFilter(jwtConfig, securityService))
-				.apply(new JwtConfigurer(jwtTokenProvider));
-
-		// Add a filter to validate user credentials and add token in the response
-		// header
-		// What's the authenticationManager()?
-		// An object provided by WebSecurityConfigurerAdapter, used to authenticate the
-		// user passing user's credentials
-		// The filter needs this auth manager to authenticate the user.
-		// .and().addFilter(new JwtUsernameAndPasswordAuthenticationFilter(jwtConfig,
-		// securityService))
-		// Add a filter to validate the tokens with every request
-		// .addFilterAfter(new JwtTokenAuthenticationFilter(jwtConfig),
-		// UsernamePasswordAuthenticationFilter.class);
-
-		// .and().addFilter(new JWTAuthenticationFilter(authenticationManager()))
-		// .addFilter(new
-		// JWTAuthorizationFilter(authenticationManager())).sessionManagement()
-		// .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+				.and().authorizeRequests().antMatchers("/x/login").permitAll().antMatchers("/auth/**").hasRole("USER")
+				.anyRequest().authenticated().and().apply(new JwtConfigurer(jwtTokenProvider));
 
 		// @formatter:on
 	}

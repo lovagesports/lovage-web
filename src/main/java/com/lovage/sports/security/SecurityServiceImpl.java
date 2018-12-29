@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,44 +24,35 @@ public class SecurityServiceImpl implements SecurityService {
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
-	private UserService userDetailsService;
+	private UserService userService;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+	@Autowired
+	private TokenStore tokenStore;
+
+	@Autowired
+	private JwtTokenProvider jwtTokenProvider;
+
 	private static final Logger logger = LoggerFactory.getLogger(SecurityServiceImpl.class);
 
 	@Override
-	public String findLoggedInUsername() {
-		Object userDetails = SecurityContextHolder.getContext().getAuthentication().getDetails();
-		if (userDetails instanceof UserDetails) {
-			return ((UserDetails) userDetails).getUsername();
-		}
+	public String autologin(String username, String password) {
 
-		return null;
-	}
+		String jwtToken = jwtTokenProvider.createToken(username, userService.findUserByEmail(username)
+				.orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found")).getRoles());
 
-	@Override
-	public Authentication autologin(String username, String password) {
-		UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+		authenticate(username, password);
 
-		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-				userDetails, password, userDetails.getAuthorities());
-
-		Authentication auth = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-
-		if (usernamePasswordAuthenticationToken.isAuthenticated()) {
-			SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-			logger.debug(String.format("Auto login %s successfully!", username));
-		}
-
-		return auth;
+		tokenStore.getTokens().add(jwtToken);
+		return jwtToken;
 	}
 
 	@Override
 	public boolean checkUserLogin(LoginUser loginUser) {
 
-		Optional<User> user = userDetailsService.findUserByEmail(loginUser.getEmail());
+		Optional<User> user = userService.findUserByEmail(loginUser.getEmail());
 		if (user.isPresent() && user.get().isEnabled()) {
 			return bCryptPasswordEncoder.matches(loginUser.getPassword(), user.get().getPassword());
 		}
@@ -74,4 +65,18 @@ public class SecurityServiceImpl implements SecurityService {
 		SecurityContextHolder.clearContext();
 	}
 
+	private void authenticate(String username, String password) {
+
+		UserDetails userDetails = userService.loadUserByUsername(username);
+
+		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+				userDetails, password, userDetails.getAuthorities());
+
+		authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+
+		if (usernamePasswordAuthenticationToken.isAuthenticated()) {
+			SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+			logger.debug(String.format("Auto login %s successfully!", username));
+		}
+	}
 }

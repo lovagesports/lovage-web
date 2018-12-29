@@ -20,7 +20,7 @@ import com.lovage.sports.service.FieldsService;
 import com.lovage.sports.web.domain.CreateField;
 
 @RestController
-@RequestMapping("/fields")
+@RequestMapping("/auth/fields")
 public class FieldsController {
 
 	@Autowired

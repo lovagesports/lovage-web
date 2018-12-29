@@ -3,7 +3,6 @@ package com.lovage.sports.security;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -11,9 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
@@ -33,6 +30,9 @@ public class JwtTokenProvider {
 
 	@Autowired
 	private JwtConfig jwtConfig;
+
+	@Autowired
+	private TokenStore tokenStore;
 
 	@PostConstruct
 	protected void init() {
@@ -57,7 +57,7 @@ public class JwtTokenProvider {
 		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 	}
 
-	public String getUsername(String token) {
+	private String getUsername(String token) {
 		Claims claims = Jwts.parser().setSigningKey(jwtConfig.getSecret()).parseClaimsJws(token).getBody();
 		return claims.getSubject();
 	}
@@ -87,34 +87,9 @@ public class JwtTokenProvider {
 				return false;
 			}
 
-			String authenticatedUsername = null;
-			List<String> authenticationAuthorities = null;
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			if (authentication == null || !authentication.isAuthenticated()) {
-				return false;
-			}
+			boolean inTokenStorage = tokenStore.getTokens().contains(token);
 
-			User user = (User) authentication.getPrincipal();
-			if (user == null || !user.isEnabled()) {
-				return false;
-			}
-
-			authenticatedUsername = user.getUsername().toString();
-			authenticationAuthorities = user.getAuthorities().stream().map((GrantedAuthority a) -> {
-				return a.getAuthority();
-			}).collect(Collectors.toList());
-
-			String tokenUsername = claims.getSubject();
-			@SuppressWarnings("unchecked")
-			List<String> tokenAuthorities = (List<String>) claims.get("roles");
-
-			if (tokenUsername == null || authenticationAuthorities == null
-					|| !tokenUsername.equals(authenticatedUsername)
-					|| !authenticationAuthorities.containsAll(tokenAuthorities)) {
-				return false;
-			}
-
-			return true;
+			return inTokenStorage;
 
 		} catch (JwtException | IllegalArgumentException e) {
 			// In case of failure. Make sure it's clear; so guarantee user won't be
